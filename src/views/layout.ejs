@@ -1,0 +1,25 @@
+<!-- src/views/layout.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title || 'LP Publisher' %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <% if (user) { %>
+  <header class="header">
+    <div class="logo">LP Publisher</div>
+    <nav>
+      <span class="user-name"><%= user.username %></span>
+      <a href="/logout" class="btn btn-secondary">Logout</a>
+    </nav>
+  </header>
+  <% } %>
+
+  <main class="main">
+    <%- body %>
+  </main>
+</body>
+</html>
