@@ -9,7 +9,7 @@ const users = [
     id: 1,
     username: 'admin',
     // Default password: 'changeme' - CHANGE IN PRODUCTION
-    passwordHash: '$2b$10$rEheKPKgtRZj0697I8vPI.E/rp0uYONjdHktw5RY.wAiK1/YV52HS'
+    passwordHash: '$2b$10$WzRWo1krzdn6rnlR7q0XYeKFHTScwI8.V46taNlsgQnlLK5rH8Roi'
   }
 ];
 
