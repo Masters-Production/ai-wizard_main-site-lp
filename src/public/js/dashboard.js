@@ -11,7 +11,7 @@ async function loadLandingPages() {
 
       if (data.landingPages.length === 0) {
         container.innerHTML = '<p class="no-lps">No landing pages yet</p>';
-        return;
+        continue;
       }
 
       container.innerHTML = data.landingPages.map(lp => `
@@ -38,6 +38,27 @@ async function loadLandingPages() {
       console.error(`Error loading LPs for ${brand.id}:`, error);
     }
   }
+}
+
+function addLP(brandId) {
+  const input = document.getElementById(`new-lp-${brandId}`);
+  const repoName = input.value.trim();
+
+  if (!repoName) {
+    showToast('Please enter a repo name', 'error');
+    return;
+  }
+
+  // Extract slug from repo name (remove brand prefix if present)
+  const brand = brands.find(b => b.id === brandId);
+  let slug = repoName;
+  if (repoName.startsWith(brand.lpRepoPrefix)) {
+    slug = repoName.replace(brand.lpRepoPrefix, '');
+  }
+
+  // Deploy preview for the new LP
+  deployPreview(brandId, 'lp', repoName, slug);
+  input.value = '';
 }
 
 async function deployPreview(brandId, type, repoName, slug = null) {
