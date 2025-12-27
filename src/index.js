@@ -6,11 +6,16 @@ const path = require('path');
 const passport = require('./auth/passport');
 const config = require('./config');
 const apiRoutes = require('./routes/api');
+const webhookRoutes = require('./routes/webhook');
 
 const app = express();
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// Webhook route (before body parser for raw body access)
+// Note: Must be before express.json() middleware
+app.use('/webhook', webhookRoutes);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

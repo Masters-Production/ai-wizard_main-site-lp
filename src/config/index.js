@@ -7,7 +7,8 @@ module.exports = {
 
   github: {
     token: process.env.GITHUB_TOKEN,
-    org: process.env.GITHUB_ORG || 'Masters-Production'
+    org: process.env.GITHUB_ORG || 'Masters-Production',
+    webhookSecret: process.env.GITHUB_WEBHOOK_SECRET || 'change-me'
   },
 
   brands,
