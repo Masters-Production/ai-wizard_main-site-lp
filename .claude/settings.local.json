@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(superpowers:subagent-driven-development)",
+      "Bash(curl:*)"
+    ]
+  }
+}
