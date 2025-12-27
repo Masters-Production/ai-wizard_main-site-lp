@@ -5,6 +5,7 @@ const session = require('express-session');
 const path = require('path');
 const passport = require('./auth/passport');
 const config = require('./config');
+const apiRoutes = require('./routes/api');
 
 const app = express();
 
@@ -56,6 +57,9 @@ app.get('/logout', (req, res) => {
 app.get('/', ensureAuth, (req, res) => {
   res.render('dashboard', { user: req.user, brands: config.brands });
 });
+
+// API routes (protected)
+app.use('/api', ensureAuth, apiRoutes);
 
 app.listen(config.port, () => {
   console.log(`LP Publisher running on http://localhost:${config.port}`);
