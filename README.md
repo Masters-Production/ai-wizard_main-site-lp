@@ -60,3 +60,22 @@ Live deployment still requires manual "Go Live" click.
 3. **Automatically:** Preview updates
 4. Check preview at `preview.domain.com`
 5. Click "Go Live" when ready
+
+## Cloudflare CDN Setup
+
+The system automatically purges Cloudflare cache when you deploy to live.
+
+### Create Cloudflare API Token
+
+1. Go to Cloudflare Dashboard -> My Profile -> API Tokens
+2. Create Token -> Custom Token
+3. Permissions: Zone -> Cache Purge -> Purge
+4. Zone Resources: Include -> Specific zone -> your domains
+5. Copy token to `CLOUDFLARE_API_TOKEN` in `.env`
+
+### Get Zone IDs
+
+1. Go to Cloudflare Dashboard -> select domain
+2. On Overview page, scroll down to "API" section
+3. Copy "Zone ID" for each domain
+4. Add to `.env` as `CLOUDFLARE_ZONE_BRAND1` and `CLOUDFLARE_ZONE_BRAND2`
