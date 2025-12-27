@@ -5,10 +5,15 @@ const config = require('../config');
 const GitHubService = require('../services/github');
 const BuilderService = require('../services/builder');
 const DeployerService = require('../services/deployer');
+const CloudflareService = require('../services/cloudflare');
 
 const github = new GitHubService(config.github.token, config.github.org);
 const builder = new BuilderService(config.paths.builds);
 const deployer = new DeployerService(config.paths.www, config.paths.preview);
+const cloudflare = new CloudflareService(
+  config.cloudflare.apiToken,
+  config.cloudflare.zoneIds
+);
 
 // Get all repos for a brand
 router.get('/brands/:brandId/repos', async (req, res) => {
@@ -85,6 +90,12 @@ router.post('/deploy/live', async (req, res) => {
     const preserveLp = type === 'main';
     await deployer.promoteToLive(previewPath, livePath, preserveLp);
 
+    // Purge Cloudflare cache after successful deployment
+    const purgeResult = await cloudflare.purgeSite(brand.domain, type, slug);
+    if (!purgeResult.success) {
+      console.log(`Cloudflare cache purge skipped/failed: ${purgeResult.reason || purgeResult.error || 'Unknown error'}`);
+    }
+
     const liveUrl = type === 'main'
       ? `https://${brand.domain}/`
       : `https://${brand.domain}/lp/${slug}/`;
@@ -92,7 +103,8 @@ router.post('/deploy/live', async (req, res) => {
     res.json({
       success: true,
       liveUrl,
-      message: `Published to live: ${liveUrl}`
+      message: `Published to live: ${liveUrl}`,
+      cachePurged: purgeResult.success
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

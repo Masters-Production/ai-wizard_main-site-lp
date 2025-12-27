@@ -17,5 +17,13 @@ module.exports = {
     www: process.env.WWW_PATH || '/var/www',
     preview: process.env.PREVIEW_PATH || '/var/www/preview',
     builds: process.env.BUILDS_PATH || '/tmp/lp-builds'
+  },
+
+  cloudflare: {
+    apiToken: process.env.CLOUDFLARE_API_TOKEN,
+    zoneIds: {
+      [process.env.BRAND1_DOMAIN || 'brand1.local']: process.env.CLOUDFLARE_ZONE_BRAND1,
+      [process.env.BRAND2_DOMAIN || 'brand2.local']: process.env.CLOUDFLARE_ZONE_BRAND2
+    }
   }
 };
