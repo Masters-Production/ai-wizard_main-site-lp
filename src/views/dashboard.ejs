@@ -1,0 +1,67 @@
+<!-- src/views/dashboard.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - LP Publisher</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="logo">LP Publisher</div>
+    <nav>
+      <span class="user-name"><%= user.username %></span>
+      <a href="/logout" class="btn btn-secondary btn-small">Logout</a>
+    </nav>
+  </header>
+
+  <main class="main">
+    <% brands.forEach(brand => { %>
+    <section class="brand-section" data-brand-id="<%= brand.id %>">
+      <div class="brand-header">
+        <h2><%= brand.name %> (<%= brand.domain %>)</h2>
+      </div>
+
+      <div class="brand-content">
+        <!-- Main Site -->
+        <div class="section-title">Main Site</div>
+        <div class="site-row" data-type="main" data-repo="<%= brand.mainSiteRepo %>">
+          <div class="site-info">
+            <span class="site-name"><%= brand.mainSiteRepo %></span>
+            <span class="status status-none" id="status-<%= brand.id %>-main">Not deployed</span>
+          </div>
+          <div class="actions">
+            <button class="btn btn-small btn-warning" onclick="deployPreview('<%= brand.id %>', 'main', '<%= brand.mainSiteRepo %>')">
+              Deploy Preview
+            </button>
+            <button class="btn btn-small btn-success" onclick="goLive('<%= brand.id %>', 'main')">
+              Go Live
+            </button>
+            <a href="https://<%= brand.domain %>/" target="_blank" class="btn btn-small btn-secondary">View</a>
+          </div>
+        </div>
+
+        <!-- Landing Pages -->
+        <div class="section-title" style="margin-top: 1.5rem;">Landing Pages</div>
+        <div id="lp-list-<%= brand.id %>" class="lp-list">
+          <p class="loading">Loading...</p>
+        </div>
+
+        <div class="add-lp" style="margin-top: 1rem;">
+          <input type="text" id="new-lp-<%= brand.id %>" placeholder="Enter LP repo name..." class="input-text">
+          <button class="btn btn-small btn-primary" onclick="addLP('<%= brand.id %>')">+ Add LP</button>
+        </div>
+      </div>
+    </section>
+    <% }); %>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script>
+    const brands = <%- JSON.stringify(brands) %>;
+  </script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
