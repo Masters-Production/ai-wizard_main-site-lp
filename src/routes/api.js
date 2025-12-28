@@ -18,13 +18,18 @@ const cloudflare = new CloudflareService(
 // Get all repos for a brand
 router.get('/brands/:brandId/repos', async (req, res) => {
   try {
+    console.log('API: Fetching repos for brand:', req.params.brandId);
     const brand = config.brands.find(b => b.id === req.params.brandId);
     if (!brand) {
+      console.log('API: Brand not found:', req.params.brandId);
       return res.status(404).json({ error: 'Brand not found' });
     }
+    console.log('API: Brand found:', brand.name, 'LP prefix:', brand.lpRepoPrefix);
 
     const allRepos = await github.listRepos();
+    console.log('API: Total repos:', allRepos.length);
     const lpRepos = github.filterByPrefix(allRepos, brand.lpRepoPrefix);
+    console.log('API: Filtered LPs:', lpRepos.length);
 
     const lps = lpRepos.map(repo => ({
       name: repo.name,
@@ -46,6 +51,7 @@ router.get('/brands/:brandId/repos', async (req, res) => {
 router.post('/deploy/preview', async (req, res) => {
   try {
     const { brandId, type, repoName, slug } = req.body;
+    console.log('Deploy preview:', { brandId, type, repoName, slug });
 
     const brand = config.brands.find(b => b.id === brandId);
     if (!brand) {
@@ -54,22 +60,27 @@ router.post('/deploy/preview', async (req, res) => {
 
     // Clone and build
     const repoUrl = `https://github.com/${config.github.org}/${repoName}.git`;
+    console.log('Cloning:', repoUrl);
     const outputPath = await builder.fullBuild(repoUrl, repoName);
+    console.log('Build output:', outputPath);
 
     // Deploy to preview
     const previewPath = deployer.getPreviewPath(brandId, type, slug);
+    console.log('Deploying to:', previewPath);
     await deployer.deploy(outputPath, previewPath);
 
     const previewUrl = type === 'main'
       ? `https://${brand.previewDomain}/`
       : `https://${brand.previewDomain}/lp/${slug}/`;
 
+    console.log('Deploy success:', previewUrl);
     res.json({
       success: true,
       previewUrl,
       message: `Deployed to preview: ${previewUrl}`
     });
   } catch (error) {
+    console.error('Deploy error:', error);
     res.status(500).json({ error: error.message });
   }
 });

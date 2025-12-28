@@ -25,8 +25,18 @@ class BuilderService {
     // Remove existing if present
     await fs.rm(buildPath, { recursive: true, force: true });
 
-    // Clone fresh
-    await execAsync(`git clone --depth 1 ${repoUrl} ${buildPath}`);
+    // Clone fresh (quote path for spaces)
+    try {
+      console.log('Executing git clone...');
+      const { stdout, stderr } = await execAsync(`git clone --depth 1 "${repoUrl}" "${buildPath}"`, { timeout: 120000 });
+      if (stdout) console.log('Clone stdout:', stdout);
+      if (stderr) console.log('Clone stderr:', stderr);
+    } catch (error) {
+      console.error('Clone failed:', error.message);
+      console.error('Clone stderr:', error.stderr);
+      console.error('Clone stdout:', error.stdout);
+      throw error;
+    }
 
     return buildPath;
   }
